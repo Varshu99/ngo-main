@@ -7,6 +7,16 @@ from heart_charity import views
 urlpatterns = [
 
     path("", views.home, name="home"),  # Home page
+    path('signup/', views.signup_view, name='signup'),
+    path('signin', views.signin_view, name='signin'),
+    path("our_causes/",views.our_causes,name="our_causes"),
+    path("logout", views.logout_view, name="logout"),  # Logout page
+    path(
+        "request_password_reset/",
+        views.request_password_reset,
+        name="request_password_reset",
+    ),
+    path("reset_password/<uname>/", views.reset_password, name="reset_password"),
     # path("issue_item/", views.issue_item, name="issue_item"),  # Book issue page
     # path("signin/", views.login_user, name="signin"),  # Login page
     # path("register", views.register, name="register"),  # Registration page

@@ -91,44 +91,45 @@ https://templatemo.com/tm-581-kind-heart-charity
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <!-- <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#top">Home</a>
-                        </li> -->
+                    <ul class="navbar-nav me-auto">
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Causes</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">Volunteer</a>
-                        </li>
-                        <li class="nav-item">
-                            <!-- <a class="nav-link click-scroll" href="{% url 'our_causes' %}">causes</a> -->
-                        </li>
-                        <li class="nav-item ms-3">
-                            <a class="nav-link custom-btn custom-border-btn btn" href="#section_3">Donate</a>
-                        </li>
-                        
-                        <li class="nav-item ms-3">
-                            <!-- <a class="nav-link custom-btn custom-border-btn btn" href="{% url 'signin' %}">Logout</a> -->
-                        </li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li> -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'our_causes' %}">our_causes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Return</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Study Material</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">For Readers</a></li>
                         {% endif %}
-
-                        
-                        {% if not user.is_authenticated %}
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">About</a>
-                        </li>
-
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_6">Contact</a>
-                        </li>
-                        {% endif %}
-
                     </ul>
+                    <ul class="navbar-nav ms-auto">
+                        {% if not user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'signin' %}">SignIn</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">SignUp</a></li>
+                        {% endif %}
+                    </ul>
+                    {% if user.is_authenticated %}
+                    <!-- <div class="dropdown nav-item">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color:var(--bs-navbar-brand-color)">Welcome, {{ request.user.username }}</a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li ><a class="dropdown-item text-light" id="logoutButton" >Logout</a></li>
+                        </ul>
+                    </div> -->
+                    <div class="dropdown nav-item" >
+                     <button class="btn  nav-link"  type="button" >
+                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color:var(--bs-navbar-brand-color)">Welcome, {{ request.user.username }}</a>
+                         <span class="caret"></span></button>
+                     <ul class="dropdown-menu " style="background-color: rgb(212, 209, 209) !important; ">
+                         <center>
+                             <li class="nav-item" style="padding-top: 8px !important"><a class="nav-link" href="#">Expected_book</a></li>
+                             <li class="nav-item" style="padding-top: 8px !important"><a class="nav-link" href="#">History</a></li>
+                             <li class="nav-item" style="padding-top: 8px !important"><a id="logoutButton" type="button" class="text-dark"><b><i>Logout</i></b></a></li>
+     
+                             <!-- <li><a href="#" type="button" class="text-dark">CSS</a></li> -->
+                         </center>
+                        
+                     </ul>
+                   </div>
+                 </div>
+                    {% endif %}
                 </div>
             </div>
         </nav>
@@ -147,7 +148,23 @@ https://templatemo.com/tm-581-kind-heart-charity
 
 
         </main>
-
+        <script>
+            // Get the logout button element
+            const logoutButton = document.getElementById('logoutButton');
+        
+            // Add event listener to the button
+            logoutButton.addEventListener('click', function() {
+                // Confirm before logging out
+                const userConfirmation = confirm("Are you sure you want to logout?");
+                
+                if (userConfirmation==true) {
+                    // alert("Logging out...");
+                    window.location.href = '/logout'; // Replace with your actual logout URL or action
+                } else {
+                     window.location.href="/issue_item"
+                }
+            });
+        </script>
         <footer class="site-footer">
             <div class="container">
                 <div class="row">
