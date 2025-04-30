@@ -13,19 +13,43 @@ from .models import Volunteer, Contact, Cause,Donate
 def home(req):
     return render(req,'home.html')
 
-def signin_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('/')  # redirect to home or dashboard
-        else:
-            messages.error(request, 'Invalid credentials')
-            return redirect('signin')
-    return render(request, 'signin.html')
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import Profile  # Make sure this is imported
 
+def signin_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        selected_role = request.POST.get('role', '')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            try:
+                profile = Profile.objects.get(user=user)
+                actual_role = profile.role
+
+                if selected_role != actual_role:
+                    messages.error(request, "Selected role doesn't match your account.")
+                    return render(request, 'signin.html')
+
+                login(request, user)
+
+                if actual_role == 'admin':
+                    return redirect('admin_dashboard')
+                elif actual_role == 'volunteer':
+                    return redirect('volunteer_dashboard')
+                elif actual_role == 'user':
+                    return redirect('user_dashboard')
+
+            except Profile.DoesNotExist:
+                messages.error(request, "User role not found. Contact support.")
+        else:
+            messages.error(request, "Invalid username or password.")
+
+    return render(request, 'signin.html')
 
 
 def validate_password(password):
@@ -76,11 +100,12 @@ def validate_password(password):
     if password in common_passwords:
         raise ValidationError("This password is too common. Please choose another one.")
 
-from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from .models import Profile  # Ensure you have this import
 
 @csrf_protect
 def signup_view(request):
@@ -90,6 +115,7 @@ def signup_view(request):
         email = request.POST.get("email", "")
         password1 = request.POST.get("password1", "")
         password2 = request.POST.get("password2", "")
+        role = request.POST.get("role", "")  # use get() for safety
 
         try:
             validate_password(password1)
@@ -97,12 +123,12 @@ def signup_view(request):
             context["errmsg"] = str(e)
             return render(request, "signup.html", context)
 
-        if not username or not password1 or not password2:
-            context["errmsg"] = "Field can't be empty"
+        if not username or not password1 or not password2 or not role:
+            context["errmsg"] = "Fields can't be empty"
             return render(request, "signup.html", context)
 
         elif password1 != password2:
-            context["errmsg"] = "Password and confirm password doesn't match"
+            context["errmsg"] = "Password and confirm password don't match"
             return render(request, "signup.html", context)
 
         elif username.isdigit():
@@ -112,16 +138,23 @@ def signup_view(request):
         elif password1 == username:
             context["errmsg"] = "Password cannot be the same as username"
             return render(request, "signup.html", context)
+
         else:
             try:
                 userdata = User.objects.create_user(username=username, email=email, password=password1)
                 userdata.save()
+
+                # Create profile with role
+                Profile.objects.create(user=userdata, role=role)
+
                 return redirect("signin")
-            except:
-                context["errmsg"] = "User already exists"
+
+            except Exception as e:
+                context["errmsg"] = "User already exists or another error occurred"
                 return render(request, "signup.html", context)
 
     return render(request, "signup.html")
+
 
 def request_password_reset(req):
     if req.method == "GET":
@@ -171,3 +204,15 @@ def our_causes(req):
 def logout_view(req):
     logout(req)
     return redirect("home")
+
+
+    
+
+def admin_dashboard(request):
+    return render(request,'admin_dashboard.html')
+
+def volunteer_dashboard(request):
+    return render(request,'volunteer_dashboard.html')
+
+def user_dashboard(request):
+    return render(request,'user_dashboard.html')   

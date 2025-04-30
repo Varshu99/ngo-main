@@ -17,6 +17,9 @@ urlpatterns = [
         name="request_password_reset",
     ),
     path("reset_password/<uname>/", views.reset_password, name="reset_password"),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
+    path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
     # path("issue_item/", views.issue_item, name="issue_item"),  # Book issue page
     # path("signin/", views.login_user, name="signin"),  # Login page
     # path("register", views.register, name="register"),  # Registration page

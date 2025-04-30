@@ -134,6 +134,21 @@ input[type="password"] {
         <div class="input-row">
           <input type="password" name="password" placeholder="Password" required>
         </div>
+        <div class="input-row">
+          <select name="role" style="
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 16px;
+      " required>
+            <option value="">Select Role</option>
+            <!-- <option value="admin">Admin</option> -->
+            <option value="volunteer">Volunteer</option>
+            <option value="user">User</option>
+        </select>
+        </div>
         <button type="submit" class="auth-btn">Login</button>
       </form>
       <div class="d-flex justify-content-between align-items-center">
