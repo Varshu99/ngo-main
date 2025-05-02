@@ -20,6 +20,8 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
+    # path('calendar/', views.calendar_view, name='calendar'),
+
     # path("issue_item/", views.issue_item, name="issue_item"),  # Book issue page
     # path("signin/", views.login_user, name="signin"),  # Login page
     # path("register", views.register, name="register"),  # Registration page

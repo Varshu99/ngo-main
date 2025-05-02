@@ -211,8 +211,21 @@ def logout_view(req):
 def admin_dashboard(request):
     return render(request,'admin_dashboard.html')
 
+from django.shortcuts import render
+from .models import Event
+from datetime import datetime
+
 def volunteer_dashboard(request):
-    return render(request,'volunteer_dashboard.html')
+    upcoming_events = Event.objects.filter(start_time__gte=datetime.now()).order_by('start_time')
+    return render(request, 'volunteer_dashboard.html', {'events': upcoming_events})
 
 def user_dashboard(request):
     return render(request,'user_dashboard.html')   
+
+
+# views.py
+
+
+# def calendar_view(request):
+#     upcoming_events = Event.objects.filter(start_time__gte=datetime.now()).order_by('start_time')
+#     return render(request, 'calendar.html', {'events': upcoming_events})
