@@ -1,11 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>admin Dashboard</h1>
-</body>
-</html>
+<!-- templates/calendar.html -->
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <center><h2>Admin</h2>
+    </center><hr>
+    <div class="row">
+     
+        <form method="get" action="{% url 'admin_dashboard' %}">
+            <button type="submit" name="show_users" value="1">Show Users</button>
+        </form>
+        
+    </div>
+</div>
+
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  function participate(eventId) {
+    fetch("{% url 'volunteer_dashboard' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCookie('csrftoken'),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ event_id: eventId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById(`count-${eventId}`).innerText = data.count;
+    });
+  }
+  </script>
+{% endblock %}

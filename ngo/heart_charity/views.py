@@ -38,6 +38,8 @@ def signin_view(request):
                 login(request, user)
 
                 if actual_role == 'admin':
+                    print("Redirecting to admin dashboard")
+
                     return redirect('admin_dashboard')
                 elif actual_role == 'volunteer':
                     return redirect('volunteer_dashboard')
@@ -214,9 +216,17 @@ def admin_dashboard(request):
 from django.shortcuts import render
 from .models import Event
 from datetime import datetime
+from django.shortcuts import render, get_object_or_404
 
 def volunteer_dashboard(request):
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        event = get_object_or_404(Event, id=event_id)
+        event.participant_count += 1
+        event.save()
+        return JsonResponse({'count': event.participant_count})
+    
     upcoming_events = Event.objects.filter(start_time__gte=datetime.now()).order_by('start_time')
+
     return render(request, 'volunteer_dashboard.html', {'events': upcoming_events})
 
 def user_dashboard(request):

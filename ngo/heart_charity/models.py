@@ -53,12 +53,13 @@ class Profile(models.Model):
 
 # models.py
 from django.db import models
-
 class Event(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=100, blank=True)
+    description = models.TextField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    participant_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title

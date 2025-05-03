@@ -8,7 +8,7 @@
     </center><hr>
     <div class="row">
         {% for event in events %}
-        <div class="card col-md-4 me-3" style="width: 22rem; ">
+        <div class="card col-md-4 me-3" style="width: 22rem; " data-event-id="{{ event.id }}">
             <div class="card-body">
               <h5 class="card-title"><strong>{{ event.title }}</strong></h5>
               <h6 class="card-text ">Card subtitle</h6>
@@ -17,9 +17,46 @@
 
               <p class="card-text">{{ event.description }}</p>
               <button href="#" class="btn btn-success ">Participate</button>
+              <p>Participants: <span id="count-{{ event.id }}">{{ event.participant_count }}</span></p>
+              <button onclick="participate({{ event.id }})">Participate</button>
             </div>
           </div>
           {% endfor %}
 
     </div>
-</div>{% endblock %}
+</div>
+
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  function participate(eventId) {
+    fetch("{% url 'volunteer_dashboard' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCookie('csrftoken'),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ event_id: eventId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById(`count-${eventId}`).innerText = data.count;
+    });
+  }
+  </script>
+{% endblock %}
