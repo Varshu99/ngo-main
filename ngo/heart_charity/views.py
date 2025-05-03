@@ -211,7 +211,12 @@ def logout_view(req):
     
 
 def admin_dashboard(request):
-    return render(request,'admin_dashboard.html')
+    users = []  # or users = None, depending on your logic
+
+    if request.method == "POST":
+        users = User.objects.all()
+
+    return render(request, "admin_dashboard.html", {"users": users})
 
 from django.shortcuts import render
 from .models import Event

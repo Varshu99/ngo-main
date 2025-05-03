@@ -2,18 +2,101 @@
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
+<style>
+  .row{
+    display: flex;
+  }
+  #sidebar {
+      width: 250px;
+      height: 100vh;
+      background-color: #343a40;
+  }
+  #sidebar .nav-link {
+      color: #fff;
+  }
+  #sidebar .nav-link.active {
+      background-color: #495057;
+  }
+  #main-content {
+      flex-grow: 1;
+      padding: 20px;
+  }
+  </style>
+  
+   
+    <div class="row11" style="display: flex;">
 
-<div class="container">
-    <center><h2>Admin</h2>
-    </center><hr>
-    <div class="row">
-     
-        <form method="get" action="{% url 'admin_dashboard' %}">
-            <button type="submit" name="show_users" value="1">Show Users</button>
-        </form>
-        
+      <div id="sidebar" class="d-flex flex-column p-3 text-white" >
+        <h4 class="text-center text-white">Dashboard</h4>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+              <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Show Users</button>
+            </form>            </li>
+            <li>
+                <a href="#" class="nav-link">Manage Donations</a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">Events</a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">Settings</a>
+            </li>
+        </ul>
     </div>
-</div>
+
+    <div id="main-content" >
+<!-- 
+      <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Show Users</button>
+      </form> -->
+
+      {% if users %}
+      <h2 class="mt-4">Users:</h2>
+      <div class="table-responsive mt-3">
+          <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                  <tr>
+                      <th>#</th>
+                      <th>Username</th>
+                      <th>Email</th>
+                      <th>Role</th>
+
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for user in users %}
+                  <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>
+                        {% if user.is_superuser %}
+                            Admin
+                        {% elif user.is_staff %}
+                            Staff
+                        {% elif user.is_volunteer %}
+                            Volunteer
+                        {% else %}
+                            User
+                        {% endif %}
+                    </td>
+
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% else %}
+      <p class="mt-4">No users to show.</p>
+  {% endif %}
+  
+
+
+    </div>
 
 
 <script>
