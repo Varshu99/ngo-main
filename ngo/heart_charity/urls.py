@@ -9,7 +9,7 @@ urlpatterns = [
     path("", views.home, name="home"),  # Home page
     path('signup/', views.signup_view, name='signup'),
     path('signin', views.signin_view, name='signin'),
-    path("our_causes/",views.our_causes,name="our_causes"),
+    # path("our_causes/",views.our_causes,name="our_causes"),
     path("logout", views.logout_view, name="logout"),  # Logout page
     path(
         "request_password_reset/",
@@ -20,6 +20,9 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
+    path('donate/<int:id>',views.donate, name="donate" ),
+    path('donate/<int:id>/', views.donate, name='donate'),
+
     # path('calendar/', views.calendar_view, name='calendar'),
 
     # path("issue_item/", views.issue_item, name="issue_item"),  # Book issue page

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container text-center">
+    <h2>Donate to {{ cause.name }}</h2>
+    <p>{{ cause.detail }}</p>
+    <p>Goal: ₹{{ cause.goal }} | Raised: ₹{{ cause.raised }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            data-key="{{ razorpay_key }}"
+            data-amount="{{ payment.amount }}"
+            data-currency="INR"
+            data-order_id="{{ payment.id }}"
+            data-buttontext="Donate with Razorpay"
+            data-name="Heart Charity NGO"
+            data-description="Donation for {{ cause.name }}"
+            data-theme.color="#F37254">
+        </script>
+    </form>
+</div>
+
+{% endblock %}
+
+
+
+
+

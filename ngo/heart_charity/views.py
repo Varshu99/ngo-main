@@ -199,9 +199,6 @@ def reset_password(req, uname):
             return render(req, "reset_password.html", context)
 
 
-def our_causes(req):
-    causes=Cause.objects.all()
-    return render(req,'base.html',{"causes":causes})
 
 def logout_view(req):
     logout(req)
@@ -234,9 +231,63 @@ def volunteer_dashboard(request):
 
     return render(request, 'volunteer_dashboard.html', {'events': upcoming_events})
 
-def user_dashboard(request):
-    return render(request,'user_dashboard.html')   
 
+
+def user_dashboard(req):
+    causes = Cause.objects.all()
+    return render(req, 'user_dashboard.html', {"causes": causes})  
+
+
+# def donate(request,id):
+#     if request.method =="POST":
+#         name=request.POST['name']
+#         email=request.POST['email']
+#         amount=request.POST.get('amount')
+
+#         cause=Cause.objects.get(id=id)
+#         cause.raised=cause.raised+float(amount)
+#         cause.goal=cause.goal-float(amount)
+#         cause.save()
+#         donation=Donate.objects.create(name=name,email=email,amount=float(amount))
+#         donation.save()
+#         return redirect('donate')
+#     else:
+#         cause=Cause.objects.get(id=id)
+#         return render(request,'donate.html',{"cause":cause})
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404
+from .models import Cause
+
+def donate(request, id):
+    cause = get_object_or_404(Cause, id=id)
+
+    remaining_amount = cause.goal - cause.raised
+
+    if remaining_amount <= 0:
+        return render(request, 'donate.html', {
+            'cause': cause,
+            'error': "This cause has already met its goal. Thank you!"
+        })
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+    amount = int(remaining_amount * 100)  # in paise
+
+    payment = client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    context = {
+        'cause': cause,
+        'payment': payment,
+        'razorpay_key': settings.RAZORPAY_KEY_ID
+    }
+
+    return render(request, 'donate.html', context)
 
 # views.py
 

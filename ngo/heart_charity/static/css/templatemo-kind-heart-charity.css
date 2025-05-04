@@ -1425,7 +1425,7 @@ blockquote::before {
   }
 
   .section-padding {
-    padding-top: 50px;
+    padding-top: 10px;
     padding-bottom: 50px;
   }
 
