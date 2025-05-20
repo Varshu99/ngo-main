@@ -255,6 +255,30 @@ def user_dashboard(req):
 #         cause=Cause.objects.get(id=id)
 #         return render(request,'donate.html',{"cause":cause})
 
+
+import razorpay
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from datetime import date
+
+def payment(request):
+    if request.method == "POST":
+        amount_in_rupees = {{cause.goal}}  
+
+        amount_in_paise = int(amount_in_rupees * 100)
+
+        # Simulate payment success (In real life, this should be confirmed via webhook or callback)
+        client = razorpay.Client(auth=("rzp_test_wH0ggQnd7iT3nB", "eZseshY3oSsz2fcHZkTiSlCm"))
+        data = {"amount": "{{ amount_in_paise }}", "currency": "INR", "receipt": "order_rcptid_11"}  # amount in paise
+        payment = client.order.create(data=data)
+
+        # You'd normally confirm payment success here using Razorpay's webhook or status check
+        payment_success = True  # Simulating success
+
+    return render(request, "donate.html")
+
+
+
 import razorpay
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
