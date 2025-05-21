@@ -2,7 +2,7 @@
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
-<style>
+ <style>
   .row{
     display: flex;
   }
@@ -21,25 +21,39 @@
       flex-grow: 1;
       padding: 20px;
   }
+   .section {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    #sidebar {
+      width: 200px;
+      float: left;
+    }
+    #content {
+      margin-left: 220px;
   </style>
-  
-   
-    <div class="row11" style="display: flex;">
 
+</head>
+<body>
+  <div id="sidebar" style="display: flex;">
+    
       <div id="sidebar" class="d-flex flex-column p-3 text-white" >
         <h4 class="text-center text-white">Dashboard</h4>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-              <form method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Show Users</button>
-            </form>            </li>
+               <a href="#" class="nav-link">  
+                   <button style="all: unset;" onclick="showSection('users')">show users</button>
+                </a>
+               
+          </li>
             <li>
-                <a href="#" class="nav-link">Manage Donations</a>
+               <a href="#" class="nav-link">
+                  <button style="all: unset;" onclick="showSection('donations')">Manage Donations</button></a>
             </li>
             <li>
-                <a href="#" class="nav-link">Events</a>
             </li>
             <li>
                 <a href="#" class="nav-link">Settings</a>
@@ -47,15 +61,12 @@
         </ul>
     </div>
 
-    <div id="main-content" >
-<!-- 
-      <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary">Show Users</button>
-      </form> -->
 
-      {% if users %}
-      <h2 class="mt-4">Users:</h2>
+
+  <div id="content">
+    <div id="users" class="section">
+       {% if users %}
+      <h5 class="mt-4">Users:</h5>
       <div class="table-responsive mt-3">
           <table class="table table-bordered table-striped">
               <thead class="table-dark">
@@ -93,42 +104,37 @@
   {% else %}
       <p class="mt-4">No users to show.</p>
   {% endif %}
-  
-
-
     </div>
 
+    <div id="donations" class="section">
+      <h5>Manage Donations:</h5>
+      {% if donations %}
+  <h1>All Donations</h1>
+    <table border="1">
+        <tr>
+            <th>Donor</th>
+            <th>Amount</th>
+            <th>Email</th>
+        </tr>
+        {% for donate in donations %}
+        <tr>
+            <td>{{ donate.name }}</td>
+            <td>${{ donate.amount }}</td>
+            <td>{{ donate.email }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
-<script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let cookie of cookies) {
-        cookie = cookie.trim();
-        if (cookie.startsWith(name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
+{% endif %}
+    </div>
+  </div>
+  </div>
+  <script>
+    function showSection(id) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => section.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
-    return cookieValue;
-  }
-  
-  function participate(eventId) {
-    fetch("{% url 'volunteer_dashboard' %}", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': getCookie('csrftoken'),
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: new URLSearchParams({ event_id: eventId })
-    })
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById(`count-${eventId}`).innerText = data.count;
-    });
-  }
   </script>
+</body>
 {% endblock %}

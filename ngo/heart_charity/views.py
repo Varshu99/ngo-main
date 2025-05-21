@@ -6,12 +6,31 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
-from .models import Volunteer, Contact, Cause,Donate
+from .models import Volunteer, Cause,Donate
 
 
 # Create your views here.
 def home(req):
     return render(req,'home.html')
+
+
+from django.shortcuts import render, redirect
+
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        Contact.objects.create(
+            name=name,
+            email=email,
+            message=message
+        )
+        return redirect('thank_you')  # You can change this to your desired redirect
+
+    return render(request, 'home.html')
+
 
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -209,11 +228,20 @@ def logout_view(req):
 
 def admin_dashboard(request):
     users = []  # or users = None, depending on your logic
-
+    donations = []
     if request.method == "POST":
         users = User.objects.all()
+        
+        donations = Donate.objects.all()
 
-    return render(request, "admin_dashboard.html", {"users": users})
+    return render(request, "admin_dashboard.html", {"users": users},{'donations': donations})
+
+def admin_dashboard1(request):
+    donations = []
+    if request.method == "POST":        
+        donations = Donate.objects.all()
+
+    return render(request, "admin_dashboard.html",{'donations': donations})
 
 from django.shortcuts import render
 from .models import Event
@@ -225,6 +253,15 @@ def volunteer_dashboard(request):
         event = get_object_or_404(Event, id=event_id)
         event.participant_count += 1
         event.save()
+
+        # Send email to admin
+        send_mail(
+                subject='New Participation Request',
+                message='A user has clicked the Participate button.',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.ADMIN_EMAIL],  # You must define this
+                fail_silently=False,
+        )
         return JsonResponse({'count': event.participant_count})
     
     upcoming_events = Event.objects.filter(start_time__gte=datetime.now()).order_by('start_time')
@@ -268,7 +305,7 @@ def payment(request):
         amount_in_paise = int(amount_in_rupees * 100)
 
         # Simulate payment success (In real life, this should be confirmed via webhook or callback)
-        client = razorpay.Client(auth=("rzp_test_wH0ggQnd7iT3nB", "eZseshY3oSsz2fcHZkTiSlCm"))
+        client = razorpay.Client(auth=("Enter  your key", "Enter your secrete key"))
         data = {"amount": "{{ amount_in_paise }}", "currency": "INR", "receipt": "order_rcptid_11"}  # amount in paise
         payment = client.order.create(data=data)
 

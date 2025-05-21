@@ -18,6 +18,8 @@ urlpatterns = [
     ),
     path("reset_password/<uname>/", views.reset_password, name="reset_password"),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard1/', views.admin_dashboard1, name='admin_dashboard1'),
+
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
     path('donate/<int:id>',views.donate, name="donate" ),
